@@ -1,4 +1,4 @@
-package ru.trubino.farm.security;
+package ru.trubino.farm.auth.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,13 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.trubino.farm.security.payload.request.LoginRequest;
-import ru.trubino.farm.security.payload.request.RegisterRequest;
-import ru.trubino.farm.security.payload.response.AccessTokenResponse;
+import org.springframework.web.bind.annotation.*;
+import ru.trubino.farm.auth.service.AuthService;
+import ru.trubino.farm.auth.payload.request.AssignRoleRequest;
+import ru.trubino.farm.auth.payload.request.CreateRoleRequest;
+import ru.trubino.farm.auth.payload.request.LoginRequest;
+import ru.trubino.farm.auth.payload.request.RegisterRequest;
+import ru.trubino.farm.auth.payload.response.AccessTokenResponse;
 
 @Tag(
         name = "Authentication Controller",
@@ -51,7 +51,7 @@ public class AuthController {
             summary = "Returns access token",
             description = "Allows you to get access token if \"refreshToken\" cookie isn't expired."
     )
-    @GetMapping("/access-token")
+    @GetMapping("/token")
     public ResponseEntity<?> getAccessToken(HttpServletRequest request){
         AccessTokenResponse tokenResponse = authService.getAccessToken(request);
         return ResponseEntity.status(HttpStatus.OK).body(tokenResponse);
@@ -65,5 +65,23 @@ public class AuthController {
     public ResponseEntity<?> logout(HttpServletResponse response){
         authService.logout(response);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(
+            summary = "Creates new role",
+            description = "Creates new role"
+    )
+    @PostMapping("/roles")
+    public ResponseEntity<?> createRole(@RequestBody CreateRoleRequest createRoleRequest){
+        return ResponseEntity.status(HttpStatus.OK).body(authService.createRole(createRoleRequest));
+    }
+
+    @Operation(
+            summary = "Assigns role",
+            description = "Assigns role to the user"
+    )
+    @PutMapping("/roles/users")
+    public ResponseEntity<?> assignRole(@RequestBody AssignRoleRequest assignRoleRequest){
+        return ResponseEntity.status(HttpStatus.OK).body(authService.assignRole(assignRoleRequest));
     }
 }

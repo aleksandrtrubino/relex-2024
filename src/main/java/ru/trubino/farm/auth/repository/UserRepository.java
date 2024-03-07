@@ -1,7 +1,8 @@
-package ru.trubino.farm.user;
+package ru.trubino.farm.auth.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import ru.trubino.farm.auth.model.User;
 
 import java.util.Optional;
 

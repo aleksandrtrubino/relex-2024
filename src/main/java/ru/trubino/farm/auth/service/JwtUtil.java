@@ -1,4 +1,4 @@
-package ru.trubino.farm.security;
+package ru.trubino.farm.auth.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -11,7 +11,7 @@ import java.security.Key;
 import java.util.Date;
 
 @Service
-public class JwtService {
+public class JwtUtil {
 
     @Value("${app.security.jwt.secret-key}")
     private String secretKey;

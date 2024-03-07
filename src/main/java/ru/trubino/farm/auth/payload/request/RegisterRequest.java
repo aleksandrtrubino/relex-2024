@@ -1,4 +1,4 @@
-package ru.trubino.farm.security.payload.request;
+package ru.trubino.farm.auth.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package ru.trubino.farm.security;
+package ru.trubino.farm.auth.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.trubino.farm.auth.service.CustomUserDetailsService;
+import ru.trubino.farm.auth.service.JwtUtil;
 
 import java.io.IOException;
 
@@ -22,7 +24,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
-    private JwtService jwtService;
+    private JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -35,11 +37,11 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
         String token = header.substring(BEARER_PREFIX.length());
-        if(!jwtService.isTokenValid(token)){
+        if(!jwtUtil.isTokenValid(token)){
             filterChain.doFilter(request,response);
             return;
         }
-        String username = jwtService.extractUsername(token);
+        String username = jwtUtil.extractUsername(token);
         //Validate user here
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());

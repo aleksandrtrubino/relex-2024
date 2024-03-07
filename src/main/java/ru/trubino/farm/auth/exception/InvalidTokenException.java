@@ -1,4 +1,4 @@
-package ru.trubino.farm.security.exception;
+package ru.trubino.farm.auth.exception;
 
 public class InvalidTokenException extends WebSecurityException {
     public InvalidTokenException(String message){

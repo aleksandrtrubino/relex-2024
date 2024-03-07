@@ -1,15 +1,15 @@
-package ru.trubino.farm.security;
+package ru.trubino.farm.auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.trubino.farm.user.User;
-import ru.trubino.farm.user.UserRepository;
+import ru.trubino.farm.auth.model.User;
+import ru.trubino.farm.auth.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,14 +22,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username "+ username +" not found"));
 
-        List<String> roles = new ArrayList<>();
-        roles.add("USER");
-
         return org.springframework.security.core.userdetails.User
                 .builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
-                .roles(roles.toArray(new String[0]))
+                .authorities(user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
