@@ -1,5 +1,6 @@
-package ru.trubino.farm.auth.service;
+package ru.trubino.farm.auth;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -24,15 +25,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
-    public String extractUsername(String string){
-        String BEARER_PREFIX = "Bearer ";
-        String token;
-
-        if(string.startsWith(BEARER_PREFIX))
-            token = string.substring(BEARER_PREFIX.length());
-        else
-            token = string;
-
+    public String getSubject(String token) throws JwtException {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(signingKey())
@@ -59,19 +52,5 @@ public class JwtUtil {
     public String generateAccessToken(UserDetails userDetails){
         return generateToken(userDetails, accessTokenExpiration);
     }
-
-    public Boolean isTokenValid(String token){
-        Date expirationDate = Jwts.parserBuilder().setSigningKey(signingKey()).build()
-                .parseClaimsJws(token).getBody().getExpiration();
-
-        return new Date().before(expirationDate);
-    }
-
-
-
-
-    /*public Boolean validateToken(String token){
-        return true;
-    }*/
 
 }

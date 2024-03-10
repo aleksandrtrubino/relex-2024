@@ -1,8 +1,9 @@
-package ru.trubino.farm.auth.config;
+package ru.trubino.farm.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -15,19 +16,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.trubino.farm.auth.service.CustomUserDetailsService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled=true)
 public class WebSecurityConfig {
 
-    private final String[] ANY = {"/api/v1/security/**","/swagger-ui/**","/v3/api-docs/**"};
-    private final String[] ADMIN_ONLY = {"/api/v1/users"};
-
     @Autowired
-    CustomUserDetailsService userDetailsService;
+    UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     JwtFilter jwtFilter;
@@ -50,6 +50,7 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
+    private final String[] PUBLIC = {"/swagger-ui/**","/v3/api-docs/**","/api/v1/auth"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -57,7 +58,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers(ANY).permitAll()
+                                .requestMatchers(PUBLIC).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

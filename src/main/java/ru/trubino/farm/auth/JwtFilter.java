@@ -1,4 +1,4 @@
-package ru.trubino.farm.auth.config;
+package ru.trubino.farm.auth;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.trubino.farm.auth.service.CustomUserDetailsService;
-import ru.trubino.farm.auth.service.JwtUtil;
+import ru.trubino.farm.user.User;
 
 import java.io.IOException;
 
@@ -21,7 +19,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -32,19 +30,15 @@ public class JwtFilter extends OncePerRequestFilter {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         String BEARER_PREFIX = "Bearer ";
 
-        if(header == null || !header.startsWith(BEARER_PREFIX)){
+        if(header == null){
             filterChain.doFilter(request,response);
             return;
         }
+
         String token = header.substring(BEARER_PREFIX.length());
-        if(!jwtUtil.isTokenValid(token)){
-            filterChain.doFilter(request,response);
-            return;
-        }
-        String username = jwtUtil.extractUsername(token);
-        //Validate user here
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
+        String username = jwtUtil.getSubject(token);
+        User user = userDetailsService.loadUserByUsername(username);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,null, user.getAuthorities());
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);

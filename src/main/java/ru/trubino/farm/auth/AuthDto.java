@@ -1,4 +1,4 @@
-package ru.trubino.farm.auth.payload.request;
+package ru.trubino.farm.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AssignRoleRequest {
+public class AuthDto {
     String email;
-    String role;
+    String password;
 }
