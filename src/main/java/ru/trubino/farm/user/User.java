@@ -35,13 +35,9 @@ public class User implements UserDetails {
     private Set<Authority> authorities;
 
     @Column(unique = true)
-    @Getter
     private String email;
-    @Getter
     private String firstName;
-    @Getter
     private String middleName;
-    @Getter
     private String lastName;
 
 

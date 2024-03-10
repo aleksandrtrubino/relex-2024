@@ -1,0 +1,62 @@
+package ru.trubino.farm.product;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.*;
+
+@Tag(
+        name = "Product Controller",
+        description = ""
+
+)
+@RestController
+@PreAuthorize("hasRole('OWNER')")
+@RequestMapping("/api/v1/products")
+public class ProductController {
+
+    @Autowired
+    ProductService productService;
+
+    @Operation(
+            summary = "",
+            description = ""
+    )
+    @GetMapping
+    public ResponseEntity<?> findAllProducts(){
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAllProducts());
+    }
+
+    @Operation(
+            summary = "",
+            description = ""
+    )
+    @PostMapping
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto){
+        return ResponseEntity.status(HttpStatus.OK).body(productService.createProduct(productDto));
+    }
+
+    @Operation(
+            summary = "",
+            description = ""
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProductById(@PathVariable Long id, @RequestBody ProductDto productDto){
+        return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(id,productDto));
+    }
+
+    @Operation(
+            summary = "",
+            description = ""
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProductById(@PathVariable Long id){
+        productService.deleteProductById(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+}
