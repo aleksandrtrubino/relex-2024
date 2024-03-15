@@ -30,14 +30,14 @@ public class AuthService {
     AuthenticationManager authenticationManager;
 
 
-    public JwtDto openSession(HttpServletResponse response, AuthDto authDto){
+    public TokenDto openSession(HttpServletRequest request, HttpServletResponse response, AuthDto authDto){
         String email = authDto.getEmail();
         String password = authDto.getPassword();
 
         User user = userRepository.findByEmail(email)
                         .orElseThrow(()-> new UserNotFoundException("User with email "+email+" not found"));
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),password));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password, user.getAuthorities()));
 
         String refreshToken = jwtUtil.generateRefreshToken(user);
 
@@ -50,10 +50,10 @@ public class AuthService {
 
         String accessToken = jwtUtil.generateAccessToken(user);
 
-        return new JwtDto(accessToken);
+        return new TokenDto(accessToken);
     }
 
-    public JwtDto extendSession(HttpServletRequest request){
+    public TokenDto extendSession(HttpServletRequest request){
         String refreshToken = null;
         Cookie[] cookies = request.getCookies();
         if(cookies == null)
@@ -70,7 +70,7 @@ public class AuthService {
 
         String accessToken = jwtUtil.generateAccessToken(user);
 
-        return new JwtDto(accessToken);
+        return new TokenDto(accessToken);
     }
 
     public void closeSession(HttpServletResponse response){

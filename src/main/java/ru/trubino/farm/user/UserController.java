@@ -9,8 +9,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
-        name = "User Controller",
-        description = "Allows you to get information about users"
+        name = "Пользователи",
+        description = "Позволяет Владельцу регистрировать новых пользователей," +
+                " удалять пользователей (перманентно или времмено)," +
+                " получать информацию о пользователях," +
+                " редактировать информацию о пользователях."
 )
 @RestController
 @PreAuthorize("hasRole('OWNER')")
@@ -20,25 +23,29 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @Operation(summary = "Registers user", description = "Allows you to register new user based on its username, password and email")
+    @Operation(summary = "Создает нового пользователя в системе",
+            description = "Создает нового пользователя в системе на основе ФИО, пароля и электронной почты")
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserDto userDto){
         return ResponseEntity.status(HttpStatus.OK).body(userService.createUser(userDto));
     }
 
-    @Operation(summary = "Gets list of all users", description = "Returns list of all users as a JSON file or null if there's no one")
+    @Operation(summary = "Возвращает информацию о всех пользователях",
+            description = "Возвращает список с инфомацией о пользователях")
     @GetMapping("")
     public ResponseEntity<?> findAllUsers(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAllUsers());
     }
 
-    @Operation(summary = "Gets user by id", description = "Returns a user based on its id as a JSON file or null if there's no one")
+    @Operation(summary = "Возвращает информацию о пользователе",
+            description = "Возвращает информацию о пользователе с указанным идентификационным номером")
     @GetMapping("/{id}")
     public ResponseEntity<?> findUserById(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(userService.findUserById(id));
     }
 
-    @Operation(summary = "Deletes user", description = "Deletes user by id")
+    @Operation(summary = "Перманентно удаляет пользователя",
+            description = "Перманентно удаляет с указанным идентификационным номером")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id){
         userService.deleteUserById(id);
@@ -46,8 +53,10 @@ public class UserController {
     }
 
     @Operation(
-            summary = "",
-            description = ""
+            summary = "Обновляет информацию о пользователе",
+            description = "Обновляет информацию о пользователе на основе индентификационного номера." +
+                    " Позволяет обновить ФИО, пароль и электронную почту." +
+                    " Также, позволяет временно удалить пользователя установив параметр enabled=false"
     )
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUserById(

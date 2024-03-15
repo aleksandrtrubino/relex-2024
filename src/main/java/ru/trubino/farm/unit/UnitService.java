@@ -2,6 +2,7 @@ package ru.trubino.farm.unit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.trubino.farm.unit.exception.UnitAlreadyExistsException;
 import ru.trubino.farm.unit.exception.UnitNotFoundException;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public class UnitService {
 
     public Unit createUnit(UnitDto unitDto){
         String name = unitDto.name();
+        if(unitRepository.existsByName(name))
+            throw new UnitAlreadyExistsException("Unit with name "+name+" already exists");
         Unit unit = Unit.builder().name(name).build();
         return unitRepository.save(unit);
     }

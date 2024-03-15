@@ -11,8 +11,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
-        name = "Product Controller",
-        description = ""
+        name = "Виды продуктов",
+        description = "Позволяет владельцу создавать, редактировать и удалять виды продуктов"
 
 )
 @RestController
@@ -24,8 +24,8 @@ public class ProductController {
     ProductService productService;
 
     @Operation(
-            summary = "",
-            description = ""
+            summary = "Возвращает список всех типов продуктов",
+            description = "Возвращает список всех типов продуктов"
     )
     @GetMapping
     public ResponseEntity<?> findAllProducts(){
@@ -33,8 +33,8 @@ public class ProductController {
     }
 
     @Operation(
-            summary = "",
-            description = ""
+            summary = "Позволяет создать новый тип продукта",
+            description = "Позволяет создать новый тип продукта"
     )
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto){
@@ -42,8 +42,8 @@ public class ProductController {
     }
 
     @Operation(
-            summary = "",
-            description = ""
+            summary = "Позволяет редактировать тип продукта",
+            description = "Позволяет редактировать тип продукта"
     )
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProductById(@PathVariable Long id, @RequestBody ProductDto productDto){
@@ -51,8 +51,8 @@ public class ProductController {
     }
 
     @Operation(
-            summary = "",
-            description = ""
+            summary = "Удаляет тип продукта",
+            description = "Удаляет тип продукта"
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProductById(@PathVariable Long id){

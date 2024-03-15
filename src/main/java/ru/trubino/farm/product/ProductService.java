@@ -2,6 +2,7 @@ package ru.trubino.farm.product;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.trubino.farm.product.exception.ProductAlreadyExistsException;
 import ru.trubino.farm.product.exception.ProductNotFoundException;
 import ru.trubino.farm.unit.Unit;
 import ru.trubino.farm.unit.UnitRepository;
@@ -24,9 +25,12 @@ public class ProductService {
 
     public Product createProduct(ProductDto productDto){
         String name = productDto.name();
+        if(productRepository.existsByName(name))
+            throw new ProductAlreadyExistsException("Product with name "+name+" already exists");
         Long unitId = productDto.unitId();
         Unit unit = unitRepository.findById(unitId)
                 .orElseThrow(()-> new UnitNotFoundException("Unit with id"+unitId+" not found"));
+
         Product product = Product.builder()
                 .name(name)
                 .unit(unit)
@@ -39,6 +43,8 @@ public class ProductService {
                 .orElseThrow(()-> new ProductNotFoundException("Product with id"+id+" not found"));
 
         String name = productDto.name();
+        if(productRepository.existsByName(name))
+            throw new ProductAlreadyExistsException("Product with name "+name+" already exists");
         Long unitId = productDto.unitId();
         Unit unit = unitRepository.findById(unitId)
                 .orElseThrow(()-> new UnitNotFoundException("Unit with id"+unitId+" not found"));
